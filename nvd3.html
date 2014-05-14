@@ -1,0 +1,96 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+
+<link href="bower_components/nvd3/nv.d3.css" rel="stylesheet">
+
+<script src="bower_components/d3/d3.min.js"></script>
+<script src="bower_components/nvd3/nv.d3.js"></script>
+
+</head>
+
+<body>
+
+<div id='chart'>
+  <svg style='height:500px'> </svg>
+</div>
+
+<script type='text/javascript'>
+/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
+nv.addGraph(function() {
+  var chart = nv.models.lineChart()
+                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
+                .transitionDuration(350)  //how fast do you want the lines to transition?
+                .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
+                .showYAxis(true)        //Show the y-axis
+                .showXAxis(true)        //Show the x-axis
+  ;
+
+  chart.xAxis     //Chart x-axis settings
+      .tickFormat(function(d) {
+          return d3.time.format('%H:%M')(new Date(d))
+  });
+
+  chart.yAxis     //Chart y-axis settings
+      .tickFormat(d3.format('.0f'));
+
+  /* Done setting the chart up? Time to render it!*/
+  var myData = testData();
+
+  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.
+      .datum(myData)         //Populate the <svg> element with chart data...
+      .call(chart);          //Finally, render the chart!
+
+  //Update the chart when window resizes.
+  nv.utils.windowResize(function() { chart.update() });
+  return chart;
+});
+
+/**************************************
+ * Simple test data generator
+ */
+
+var names = [
+  'POST /foo/bar count',
+  'GET /foo/bar/baz count',
+  'GET /foo/bar',
+  'GET /foo'
+]
+
+function testData() {
+  return stream_layers(4, 100 ,5).map(function(data, i) {
+    return {
+      key: names[i],
+      values: data
+    };
+  });
+}
+
+/* Inspired by Lee Byron's test data generator. */
+function stream_layers(n, m, o) {
+  if (arguments.length < 3) o = 0;
+  function bump(a) {
+    var x = 1 / (.1 + Math.random()),
+        y = 2 * Math.random() - .5,
+        z = 10 / (.1 + Math.random());
+    for (var i = 0; i < m; i++) {
+      var w = (i / m - y) * z;
+      a[i] += x * Math.exp(-w * w);
+    }
+  }
+  return d3.range(n).map(function() {
+      var a = [], i;
+      for (i = 0; i < m; i++) a[i] = o + o * Math.random();
+      for (i = 0; i < 5; i++) bump(a);
+      return a.map(stream_index);
+    });
+}
+
+function stream_index(d, i) {
+  return {x: i*600000, y: Math.max(0, d)};
+}
+</script>
+
+</body>
+</html>
