@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css">
+  <link type="text/css" rel="stylesheet" href="bower_components/rickshaw/src/css/graph.css">
+  <link type="text/css" rel="stylesheet" href="bower_components/rickshaw/src/css/detail.css">
+  <link type="text/css" rel="stylesheet" href="bower_components/rickshaw/src/css/legend.css">
+  <link type="text/css" rel="stylesheet" href="css/extensions.css">
+
+  <script src="bower_components/rickshaw/vendor/d3.v3.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>
+    jQuery.noConflict();
+  </script>
+
+  <script src="bower_components/rickshaw/src/js/Rickshaw.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Class.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Compat.ClassList.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.Renderer.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.Renderer.Line.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.HoverDetail.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.Legend.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.Axis.Time.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.Behavior.Series.Toggle.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.Behavior.Series.Highlight.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Fixtures.Time.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Fixtures.Time.Local.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Fixtures.Number.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Fixtures.RandomData.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Fixtures.Color.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Color.Palette.js"></script>
+  <script src="bower_components/rickshaw/src/js/Rickshaw.Graph.Axis.Y.js"></script>
+
+</head>
+
+<body>
+<div id="content">
+
+  <form id="side_panel">
+    <h1>Traffic</h1>
+    <section><div id="legend"></div></section>
+  </form>
+
+  <div id="chart_container">
+    <div id="chart"></div>
+    <div id="timeline"></div>
+  </div>
+</div>
+
+<script>
+
+// set up our data series with 150 random data points
+
+var seriesData = [ [], [], [], [] ];
+var random = new Rickshaw.Fixtures.RandomData(150);
+
+for (var i = 0; i < 150; i++) {
+  random.addData(seriesData);
+}
+
+var palette = new Rickshaw.Color.Palette( { scheme: 'colorwheel' } );
+
+// instantiate our graph!
+
+var graph = new Rickshaw.Graph( {
+  element: document.getElementById("chart"),
+  width: 900,
+  height: 500,
+  renderer: 'line',
+  interpolation: 'linear',
+  stroke: true,
+  preserve: true,
+  series: [
+    {
+      color: palette.color(),
+      data: seriesData[0],
+      name: 'GET /foo/bar count'
+    }, {
+      color: palette.color(),
+      data: seriesData[1],
+      name: 'GET /foo/bar/baz count'
+    }, {
+      color: palette.color(),
+      data: seriesData[2],
+      name: 'POST /foo count'
+    }, {
+      color: palette.color(),
+      data: seriesData[3],
+      name: 'POST /bar count'
+    }
+  ]
+} );
+
+graph.render();
+
+var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+  graph: graph,
+  xFormatter: function(x) {
+    return new Date(x * 1000).toString();
+  }
+} );
+
+var legend = new Rickshaw.Graph.Legend( {
+  graph: graph,
+  element: document.getElementById('legend')
+
+} );
+
+var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
+  graph: graph,
+  legend: legend
+} );
+
+var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight( {
+  graph: graph,
+  legend: legend
+} );
+
+var ticksTreatment = 'glow';
+
+var xAxis = new Rickshaw.Graph.Axis.Time( {
+  graph: graph,
+  ticksTreatment: ticksTreatment,
+  timeFixture: new Rickshaw.Fixtures.Time.Local()
+} );
+
+xAxis.render();
+
+var yAxis = new Rickshaw.Graph.Axis.Y( {
+  graph: graph,
+  tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+  ticksTreatment: ticksTreatment
+} );
+
+yAxis.render();
+
+
+var controls = new RenderControls( {
+  element: document.querySelector('form'),
+  graph: graph
+} );
+
+setInterval( function() {
+  random.removeData(seriesData);
+  random.addData(seriesData);
+  graph.update();
+
+}, 3000 );
+
+</script>
+
+</body>
+</html>
+
