@@ -2,6 +2,9 @@
 
 This is a comparative of two popular charting libraries, rickshaw & nvd3
 
+* [Test of rickshaw](https://kikito.github.io/rickshaw-vs-nvd3/rickshaw.html)
+* [Test of nvd3](https://kikito.github.io/rickshaw-vs-nvd3/nvd3.html)
+
 ## Examples and doc
 
 ricksaw is very spartan on its documentation, and very "to the point". It feels "engineered"
