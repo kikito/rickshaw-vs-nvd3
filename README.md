@@ -1,6 +1,8 @@
 ## [rickshaw](http://code.shutterstock.com/rickshaw/) vs [nvd3](http://nvd3.org/)
 
-This is a comparative of two popular charting libraries, rickshaw & nvd3
+We did a [previous study to identify the most popular OSS JS charting libraries](https://gist.github.com/kikito/a23fd0977db355e12d49)
+
+Then we took the two most popular & active ones, rickshaw & nvd3, and did some tests with them:
 
 * [Test of rickshaw](https://kikito.github.io/rickshaw-vs-nvd3/rickshaw.html)
 * [Test of nvd3](https://kikito.github.io/rickshaw-vs-nvd3/nvd3.html)
